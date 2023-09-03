@@ -1,4 +1,9 @@
+// web.js
+// khai báo các router đường dẫn đến các page
+
 import express from 'express';
+
+import homeController from '../controller/homeController';
 
 const router = express.Router();
 
@@ -6,11 +11,11 @@ const router = express.Router();
  * @param {*} app : express app
  */
 const initWebRoutes = (app) => {
-   router.get('/', (req, res) => {
-      res.send('hello world');
-   });
+   router.get('/', homeController.handleHomePage);
 
-   return app.use('/', router);
+   router.get('/user', homeController.handleUserPage);
+
+   return app.use('/', router); // website sẽ bắt đầu bằng localhost:1997/
 };
 
 export default initWebRoutes;
