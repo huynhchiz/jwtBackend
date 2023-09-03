@@ -12,30 +12,32 @@
    </head>
    <body>
       <div class="user-infor-container">
-         <div class="container">
-            <div class="row">
-               <div class="mb-2 mt-3 col-6">
-                  <label for="email-input" class="form-label">Email address</label>
-                  <input type="email" class="form-control" id="email-input" aria-describedby="emailHelp" />
-               </div>
-               <div class="mb-2 mt-3 col-6"></div>
+         <form method="POST" action="/users/create-user">
+            <div class="container">
+               <div class="row">
+                  <div class="mb-2 mt-3 col-6">
+                     <label for="email-input" class="form-label">Email address</label>
+                     <input type="email" class="form-control" id="email-input" name="email" required />
+                  </div>
+                  <div class="mb-2 mt-3 col-6"></div>
 
-               <div class="mb-2 col-6">
-                  <label for="password-input" class="form-label">Password</label>
-                  <input type="password" class="form-control" id="password-input" />
-               </div>
-               <div class="mb-2 mt-3 col-6"></div>
+                  <div class="mb-2 col-6">
+                     <label for="password-input" class="form-label">Password</label>
+                     <input type="password" class="form-control" id="password-input" name="password" required />
+                  </div>
+                  <div class="mb-2 mt-3 col-6"></div>
 
-               <div class="mb-2 col-6">
-                  <label for="username-input" class="form-label">Username</label>
-                  <input type="password" class="form-control" id="username-input" />
-               </div>
+                  <div class="mb-2 col-6">
+                     <label for="username-input" class="form-label">Username</label>
+                     <input type="text" class="form-control" id="username-input" name="username" required />
+                  </div>
 
-               <div class="col-12 mt-4">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <div class="col-12 mt-4">
+                     <button type="submit" class="btn btn-primary">Submit</button>
+                  </div>
                </div>
             </div>
-         </div>
+         </form>
       </div>
    </body>
 </html>

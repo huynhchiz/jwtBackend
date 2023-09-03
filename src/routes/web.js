@@ -15,6 +15,8 @@ const initWebRoutes = (app) => {
 
    router.get('/user', homeController.handleUserPage);
 
+   router.post('/users/create-user', homeController.handleCreateNewUser);
+
    return app.use('/', router); // website sẽ bắt đầu bằng localhost:1997/
 };
 
