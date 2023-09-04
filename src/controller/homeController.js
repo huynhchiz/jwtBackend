@@ -21,7 +21,18 @@ const handleCreateNewUser = (req, res) => {
 
    userService.createNewUser(email, password, username);
 
-   res.send('handle create new user');
+   return res.redirect('/user');
+};
+
+const handleDeleteUser = async (req, res) => {
+   // lấy id động từ req.post ---- get params expressjs
+   let id = req.params.id;
+
+   console.log('deleted id: ', id);
+
+   await userService.deleteUser(id);
+
+   return res.redirect('/user');
 };
 
 // cú pháp export được nodeJs hỗ trợ module.exports
@@ -29,4 +40,5 @@ module.exports = {
    handleHomePage,
    handleUserPage,
    handleCreateNewUser,
+   handleDeleteUser,
 };

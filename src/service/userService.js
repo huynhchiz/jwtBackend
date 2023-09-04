@@ -13,19 +13,26 @@ const hashUserPassword = (userPassword) => {
    return hashPassword;
 };
 
-const createNewUser = (email, password, username) => {
+const createNewUser = async (email, password, username) => {
    let hashPass = hashUserPassword(password);
 
-   connection.query(
-      // câu lệnh insert vào table user trong jwt database
-      'INSERT INTO users(email, password, username) VALUES (?, ?, ?)',
-      [email, hashPass, username],
-      function (err, results, fields) {
-         if (err) {
-            console.log(err);
-         }
-      },
-   );
+   // create the connection to database
+   const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      database: 'jwt', //database jwt trong phpMyadmin
+      Promise: bluebird, //promise mysql
+   });
+
+   try {
+      const [rows, fields] = await connection.execute('INSERT INTO users(email, password, username) VALUES (?, ?, ?)', [
+         email,
+         hashPass,
+         username,
+      ]);
+   } catch (err) {
+      console.log('show err:', err);
+   }
 };
 
 const getUserList = async () => {
@@ -46,7 +53,26 @@ const getUserList = async () => {
    }
 };
 
+const deleteUser = async (id) => {
+   // create the connection to database
+   const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      database: 'jwt', //database jwt trong phpMyadmin
+      Promise: bluebird,
+   });
+
+   try {
+      const [rows, fields] = await connection.execute('DELETE FROM users WHERE id = ?', [id]);
+      return rows;
+   } catch (err) {
+      console.log('show err:', err);
+      return [];
+   }
+};
+
 module.exports = {
    createNewUser,
    getUserList,
+   deleteUser,
 };

@@ -17,6 +17,10 @@ const initWebRoutes = (app) => {
 
    router.post('/users/create-user', homeController.handleCreateNewUser);
 
+   // dấu :id là cách truyền tham số động 'id' của express (giống nội suy)
+   // truyền id để bên controller nhận được
+   router.post('/users/delete-user/:id', homeController.handleDeleteUser);
+
    return app.use('/', router); // website sẽ bắt đầu bằng localhost:1997/
 };
 
