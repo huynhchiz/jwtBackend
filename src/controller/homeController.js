@@ -3,13 +3,16 @@
 
 import userService from '../service/userService';
 
-const handleHomePage = (req, res) =>
+const handleHomePage = (req, res) => {
    // thực hiện model ở đây : get data from database
-   res.render('home.ejs');
+   return res.render('home.ejs');
+};
 
-const handleUserPage = (req, res) =>
+const handleUserPage = async (req, res) => {
    // thực hiện model ở đây : get data from database
-   res.render('user.ejs');
+   let userList = await userService.getUserList();
+   return res.render('user.ejs', { userList });
+};
 
 const handleCreateNewUser = (req, res) => {
    let email = req.body.email;

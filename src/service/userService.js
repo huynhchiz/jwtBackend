@@ -1,17 +1,12 @@
 // userService.js
-// xử lý những cái liên quan đến database
+// xử lý những thứ liên quan đến database
 
-import mysql from 'mysql2';
+import mysql from 'mysql2/promise';
+import bluebird from 'bluebird';
+
 import bcrypt from 'bcryptjs';
 
 const salt = bcrypt.genSaltSync(10); // bcryptjs hass sync
-
-// create the connection to database
-const connection = mysql.createConnection({
-   host: 'localhost',
-   user: 'root',
-   database: 'jwt', //database trong phpMyadmin
-});
 
 const hashUserPassword = (userPassword) => {
    let hashPassword = bcrypt.hashSync(userPassword, salt);
@@ -22,6 +17,7 @@ const createNewUser = (email, password, username) => {
    let hashPass = hashUserPassword(password);
 
    connection.query(
+      // câu lệnh insert vào table user trong jwt database
       'INSERT INTO users(email, password, username) VALUES (?, ?, ?)',
       [email, hashPass, username],
       function (err, results, fields) {
@@ -32,13 +28,22 @@ const createNewUser = (email, password, username) => {
    );
 };
 
-const getUserList = () => {
-   connection.query('SELECT * from users', function (err, results, fields) {
-      if (err) {
-         console.log(err);
-      }
-      console.log('show results: ', results);
+const getUserList = async () => {
+   // create the connection to database
+   const connection = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      database: 'jwt', //database jwt trong phpMyadmin
+      Promise: bluebird,
    });
+
+   try {
+      const [rows, fields] = await connection.execute('SELECT * FROM users');
+      return rows;
+   } catch (err) {
+      console.log('show err:', err);
+      return [];
+   }
 };
 
 module.exports = {
