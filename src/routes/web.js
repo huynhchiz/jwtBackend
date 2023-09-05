@@ -21,6 +21,10 @@ const initWebRoutes = (app) => {
    // truyền id để bên controller nhận được
    router.post('/users/delete-user/:id', homeController.handleDeleteUser);
 
+   router.get('/users/update-user/:id', homeController.getUpdateUserPage);
+
+   router.post('/users/update-user', homeController.handleUpdateUser);
+
    return app.use('/', router); // website sẽ bắt đầu bằng localhost:1997/
 };
 

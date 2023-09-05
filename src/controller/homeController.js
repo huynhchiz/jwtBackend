@@ -28,9 +28,32 @@ const handleDeleteUser = async (req, res) => {
    // lấy id động từ req.post ---- get params expressjs
    let id = req.params.id;
 
-   console.log('deleted id: ', id);
-
    await userService.deleteUser(id);
+
+   return res.redirect('/user');
+};
+
+const getUpdateUserPage = async (req, res) => {
+   let user = {};
+   let id = req.params.id;
+   const userResult = await userService.getUserById(id);
+
+   //vì promiseSQL trả về rows là 1 array nên phải check phần tử trong array
+   if (userResult && userResult.length > 0) {
+      user = userResult[0];
+   } else {
+      return user;
+   }
+
+   return res.render('user-update.ejs', { user });
+};
+
+const handleUpdateUser = async (req, res) => {
+   let id = req.body.id;
+   let email = req.body.email;
+   let username = req.body.username;
+
+   await userService.updateUser(id, email, username);
 
    return res.redirect('/user');
 };
@@ -41,4 +64,6 @@ module.exports = {
    handleUserPage,
    handleCreateNewUser,
    handleDeleteUser,
+   getUpdateUserPage,
+   handleUpdateUser,
 };
