@@ -6,6 +6,8 @@ import bluebird from 'bluebird';
 
 import bcrypt from 'bcryptjs';
 
+import db from '../models/index';
+
 const salt = bcrypt.genSaltSync(10); // bcryptjs hass sync
 
 const hashUserPassword = (userPassword) => {
@@ -16,20 +18,12 @@ const hashUserPassword = (userPassword) => {
 const createNewUser = async (email, password, username) => {
    let hashPass = hashUserPassword(password);
 
-   // create the connection to database
-   const connection = await mysql.createConnection({
-      host: 'localhost',
-      user: 'root',
-      database: 'jwt', //database jwt trong phpMyadmin
-      Promise: bluebird, //promise mysql
-   });
-
    try {
-      const [rows, fields] = await connection.execute('INSERT INTO user(email, password, username) VALUES (?, ?, ?)', [
-         email,
-         hashPass,
-         username,
-      ]);
+      await db.User.create({
+         username: username,
+         email: email,
+         password: hashPass,
+      });
    } catch (err) {
       console.log('show err:', err);
    }
@@ -97,7 +91,7 @@ const updateUser = async (id, email, username) => {
    });
 
    try {
-      const [rows, fields] = await connection.execute('UPDATE users SET email = ?, username = ? WHERE id = ?', [
+      const [rows, fields] = await connection.execute('UPDATE user SET email = ?, username = ? WHERE id = ?', [
          email,
          username,
          id,
