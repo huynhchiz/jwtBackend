@@ -13,8 +13,10 @@ module.exports = {
        * }], {});
        */
 
+      // chạy cái này trong gitbash để insert mớ dl này vô db | running seeders
+      // npx sequelize-cli db:seed:all
       await queryInterface.bulkInsert(
-         'Users',
+         'User',
          [
             {
                email: 'John Doe',

@@ -25,7 +25,7 @@ const createNewUser = async (email, password, username) => {
    });
 
    try {
-      const [rows, fields] = await connection.execute('INSERT INTO users(email, password, username) VALUES (?, ?, ?)', [
+      const [rows, fields] = await connection.execute('INSERT INTO user(email, password, username) VALUES (?, ?, ?)', [
          email,
          hashPass,
          username,
@@ -45,7 +45,7 @@ const getUserList = async () => {
    });
 
    try {
-      const [rows, fields] = await connection.execute('SELECT * FROM users');
+      const [rows, fields] = await connection.execute('SELECT * FROM user');
       return rows;
    } catch (err) {
       console.log('show err:', err);
@@ -63,7 +63,7 @@ const deleteUser = async (id) => {
    });
 
    try {
-      const [rows, fields] = await connection.execute('DELETE FROM users WHERE id = ?', [id]);
+      const [rows, fields] = await connection.execute('DELETE FROM user WHERE id = ?', [id]);
       return rows;
    } catch (err) {
       console.log('show err:', err);
@@ -80,7 +80,7 @@ const getUserById = async (id) => {
    });
 
    try {
-      const [rows, fields] = await connection.execute('SELECT * FROM users WHERE id = ?', [id]);
+      const [rows, fields] = await connection.execute('SELECT * FROM user WHERE id = ?', [id]);
       return rows;
    } catch (err) {
       console.log('show err:', err);
