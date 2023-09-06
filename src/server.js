@@ -1,7 +1,8 @@
 import express from 'express';
-import configViewEngine from './configs/viewEngine';
+import configViewEngine from './config/viewEngine';
 import initWebRoutes from './routes/web';
 import bodyParser from 'body-parser';
+import connection from './config/connectDB';
 
 require('dotenv').config(); // dùng hàm config trong thư viện dotenv để đọc được process.env.PORT
 
@@ -14,6 +15,9 @@ configViewEngine(app);
 // config body-parser (middleware)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// Testing the connection
+connection();
 
 // init web routes
 initWebRoutes(app);
