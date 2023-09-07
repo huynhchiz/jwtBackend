@@ -36,13 +36,10 @@ const handleDeleteUser = async (req, res) => {
 const getUpdateUserPage = async (req, res) => {
    let user = {};
    let id = req.params.id;
-   const userResult = await userService.getUserById(id);
-
-   //vì promiseSQL trả về rows là 1 array nên phải check phần tử trong array
-   if (userResult && userResult.length > 0) {
-      user = userResult[0];
-   } else {
-      return user;
+   try {
+      user = await userService.getUserById(id);
+   } catch (err) {
+      console.log(err);
    }
 
    return res.render('user-update.ejs', { user });
