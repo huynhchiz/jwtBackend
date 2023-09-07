@@ -1,33 +1,16 @@
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
-   // chạy cái này trong gitbash để tạo table user | running migrations
-   // npx sequelize-cli db:migrate
    async up(queryInterface, Sequelize) {
-      await queryInterface.createTable('User', {
+      await queryInterface.createTable('Role_Usertype', {
          id: {
             allowNull: false,
             autoIncrement: true,
             primaryKey: true,
             type: Sequelize.INTEGER,
          },
-         email: {
-            type: Sequelize.STRING,
-         },
-         password: {
-            type: Sequelize.STRING,
-         },
-         username: {
-            type: Sequelize.STRING,
-         },
-         address: {
-            type: Sequelize.STRING,
-         },
-         phone: {
-            type: Sequelize.STRING,
-         },
-         gender: {
-            type: Sequelize.STRING,
+         roleId: {
+            type: Sequelize.INTEGER,
          },
          usertypeId: {
             type: Sequelize.INTEGER,
@@ -44,6 +27,6 @@ module.exports = {
       });
    },
    async down(queryInterface, Sequelize) {
-      await queryInterface.dropTable('User');
+      await queryInterface.dropTable('Role_Usertype');
    },
 };
