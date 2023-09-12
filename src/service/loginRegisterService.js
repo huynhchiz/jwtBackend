@@ -39,7 +39,8 @@ const registerUser = async (rawUserData) => {
       let isEmailExisted = await checkEmailExisted(rawUserData.email);
       if (isEmailExisted) {
          return {
-            EM: 'User is already exist',
+            TYPE: 'email',
+            EM: 'Email is already exist',
             EC: '1',
          };
       }
@@ -48,6 +49,7 @@ const registerUser = async (rawUserData) => {
       let isPhoneExisted = await checkPhoneExisted(rawUserData.phone);
       if (isPhoneExisted) {
          return {
+            TYPE: 'phone',
             EM: 'Phone number is already exist',
             EC: '1',
          };
@@ -59,7 +61,7 @@ const registerUser = async (rawUserData) => {
       await db.User.create({
          email: rawUserData.email,
          phone: rawUserData.phone,
-         user: rawUserData.username,
+         username: rawUserData.username,
          password: hassPass,
       });
 

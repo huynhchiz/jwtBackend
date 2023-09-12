@@ -22,6 +22,7 @@ const handleRegister = async (req, res) => {
          let data = await loginRegisterService.registerUser(req.body);
 
          return res.status(200).json({
+            TYPE: data.TYPE,
             EM: data.EM,
             EC: data.EC,
             DT: '',
