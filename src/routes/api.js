@@ -7,6 +7,7 @@ const initApiRoutes = (app) => {
    // rest api
    router.get('/test-api', apiController.testApi);
    router.post('/register', apiController.handleRegister);
+   router.post('/login', apiController.handleLogin);
 
    return app.use('/api/ver1', router); // website sẽ bắt đầu bằng
 };
