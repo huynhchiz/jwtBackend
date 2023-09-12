@@ -3,8 +3,8 @@
 
 // import mysql from 'mysql2/promise';
 // import bluebird from 'bluebird';
-import bcrypt from 'bcryptjs';
 import db from '../models/index';
+import bcrypt from 'bcryptjs';
 
 const salt = bcrypt.genSaltSync(10); // bcryptjs hass sync
 
