@@ -3,9 +3,7 @@
 
 // import mysql from 'mysql2/promise';
 // import bluebird from 'bluebird';
-
 import bcrypt from 'bcryptjs';
-
 import db from '../models/index';
 
 const salt = bcrypt.genSaltSync(10); // bcryptjs hass sync
@@ -30,8 +28,6 @@ const createNewUser = async (email, password, username) => {
 };
 
 const getUserList = async () => {
-   // test relationship
-
    // chọn ra User (id, email, name) có id = 1, bao gồm cả cái Usertype (name, des) của User đó
    let newUser = await db.User.findOne({
       where: { id: 1 }, //điều kiện
