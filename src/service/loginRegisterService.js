@@ -91,7 +91,6 @@ const handleUserLogin = async (rawUserData) => {
             [Op.or]: [{ email: rawUserData.loginValue }, { phone: rawUserData.loginValue }],
          },
       });
-      console.log('show user data: ', user.dataValues);
 
       // neu co user trong db
       if (user) {
@@ -108,30 +107,22 @@ const handleUserLogin = async (rawUserData) => {
                EC: '0',
                DT: '',
             };
-
-            // neu password SAI
-         } else {
-            console.log('password is incorrect!');
-            return {
-               EM: 'password is incorrect!',
-               EC: '1',
-               DT: '',
-            };
          }
-
-         // neu ko co user trong db
-      } else {
-         return {
-            EM: 'Your email / phone number is incorret!',
-            EC: '1',
-            DT: '',
-         };
       }
+
+      // neu ko co user || sai password
+      console.log('Email / phone or password is incorrect!');
+      return {
+         EM: 'Your email / phone number or password is incorrect!',
+         EC: '1',
+         DT: '',
+      };
    } catch (error) {
       console.log(error);
       return {
          EM: 'Something wrong in service',
          EC: '-2',
+         DT: '',
       };
    }
 };
