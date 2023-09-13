@@ -1,5 +1,6 @@
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
+import { Op } from 'sequelize'; // dùng thư viện toán tử để or condition
 
 const salt = bcrypt.genSaltSync(10); // bcryptjs hass sync
 
@@ -69,8 +70,65 @@ const registerUser = async (rawUserData) => {
          EM: 'User is created successfully',
          EC: '0',
       };
-   } catch (e) {
-      console.log(e);
+   } catch (error) {
+      console.log(error);
+      return {
+         EM: 'Something wrong in service',
+         EC: '-2',
+      };
+   }
+};
+
+const checkPassword = (inputPassword, hashPassword) => {
+   return bcrypt.compareSync(inputPassword, hashPassword);
+};
+
+const handleUserLogin = async (rawUserData) => {
+   try {
+      // find user trong db voi dieu kien == email or phone input
+      let user = await db.User.findOne({
+         where: {
+            [Op.or]: [{ email: rawUserData.loginValue }, { phone: rawUserData.loginValue }],
+         },
+      });
+      console.log('show user data: ', user.dataValues);
+
+      // neu co user trong db
+      if (user) {
+         console.log('found user with email/phone: ', rawUserData.loginValue);
+
+         // check password
+         let isCorrectPassword = checkPassword(rawUserData.password, user.password);
+
+         // neu password OK
+         if (isCorrectPassword) {
+            console.log('password is correct!');
+            return {
+               EM: 'Ok!',
+               EC: '0',
+               DT: '',
+            };
+
+            // neu password SAI
+         } else {
+            console.log('password is incorrect!');
+            return {
+               EM: 'password is incorrect!',
+               EC: '1',
+               DT: '',
+            };
+         }
+
+         // neu ko co user trong db
+      } else {
+         return {
+            EM: 'Your email / phone number is incorret!',
+            EC: '1',
+            DT: '',
+         };
+      }
+   } catch (error) {
+      console.log(error);
       return {
          EM: 'Something wrong in service',
          EC: '-2',
@@ -80,4 +138,5 @@ const registerUser = async (rawUserData) => {
 
 module.exports = {
    registerUser,
+   handleUserLogin,
 };
