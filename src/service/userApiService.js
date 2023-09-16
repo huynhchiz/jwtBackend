@@ -82,7 +82,6 @@ const getUsersWithPagination = async (page, limit) => {
 
 const createNewUser = async (data) => {
    try {
-      await db.User.create({});
    } catch (error) {
       console.log(error);
    }
@@ -102,11 +101,29 @@ const updateUser = async (data) => {
 
 const deleteUser = async (id) => {
    try {
-      await db.User.delete({
-         where: { id: id },
-      });
+      if (id) {
+         await db.User.destroy({
+            where: { id: id },
+         });
+         return {
+            EM: 'Delete user with id = ' + id,
+            EC: 0,
+            DT: '',
+         };
+      } else {
+         return {
+            EM: 'No user found',
+            EC: 0,
+            DT: [],
+         };
+      }
    } catch (error) {
       console.log(error);
+      return {
+         EM: 'Something wrong with service',
+         EC: -1,
+         DT: [],
+      };
    }
 };
 

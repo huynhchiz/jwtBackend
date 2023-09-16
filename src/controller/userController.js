@@ -37,7 +37,25 @@ const readUser = async (req, res) => {
 };
 const createUser = async (req, res) => {};
 const updateUser = async (req, res) => {};
-const deleteUser = async (req, res) => {};
+
+const deleteUser = async (req, res) => {
+   try {
+      console.log(req.body.id);
+      let data = await userApiService.deleteUser(req.body.id);
+      return res.status(200).json({
+         EM: data.EM,
+         EC: data.EC,
+         DT: data.DT,
+      });
+   } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+         EM: 'error from server',
+         EX: '-1',
+         DT: '',
+      });
+   }
+};
 
 module.exports = {
    readUser,
