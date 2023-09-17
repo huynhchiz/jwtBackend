@@ -35,8 +35,65 @@ const readUser = async (req, res) => {
       });
    }
 };
-const createUser = async (req, res) => {};
-const updateUser = async (req, res) => {};
+
+const createUser = async (req, res) => {
+   try {
+      if (!req.body.email || !req.body.phone || !req.body.password) {
+         return res.status(200).json({
+            EM: 'Missing required parameters!',
+            EC: '1',
+            DT: '',
+         });
+      } else {
+         // service: create user
+         let data = await userApiService.createNewUser(req.body);
+
+         return res.status(200).json({
+            TYPE: data.TYPE,
+            EM: data.EM,
+            EC: data.EC,
+            DT: '',
+         });
+      }
+   } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+         EM: 'error from server',
+         EX: '-1',
+         DT: '',
+      });
+   }
+};
+
+const updateUser = async (req, res) => {
+   try {
+      if (!req.body.newEmail || !req.body.newPhone) {
+         console.log(req.body);
+         return res.status(200).json({
+            EM: 'Missing required parameters!',
+            EC: '1',
+            DT: '',
+         });
+      } else {
+         // service: update user
+         let data = await userApiService.updateUser(req.body);
+
+         return res.status(200).json({
+            TYPE: data.TYPE,
+            EM: data.EM,
+            EC: data.EC,
+            DT: '',
+         });
+      }
+   } catch (error) {
+      console.log(error);
+      return res.status(500).json({
+         EM: 'error from server',
+         EX: '-1',
+         DT: '',
+      });
+   }
+};
 
 const deleteUser = async (req, res) => {
    try {

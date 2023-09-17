@@ -79,6 +79,7 @@ const registerUser = async (rawUserData) => {
    }
 };
 
+//login
 const checkPassword = (inputPassword, hashPassword) => {
    return bcrypt.compareSync(inputPassword, hashPassword);
 };
