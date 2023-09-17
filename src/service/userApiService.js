@@ -4,7 +4,7 @@ const getAllUser = async () => {
    // get all users (no condition)
    try {
       let users = await db.User.findAll({
-         attributes: ['id', 'email', 'username', 'phone'],
+         attributes: ['id', 'email', 'username', 'phone', 'address'],
          include: { model: db.Usertype, attributes: ['name', 'description'] },
       });
       if (users) {
@@ -43,7 +43,7 @@ const getUsersWithPagination = async (page, limit) => {
       let usersInOnePage = await db.User.findAll({
          offset: offset,
          limit: limit,
-         attributes: ['id', 'email', 'username', 'phone'],
+         attributes: ['id', 'email', 'username', 'phone', 'address'],
          include: { model: db.Usertype, attributes: ['name', 'description'] },
       });
 
