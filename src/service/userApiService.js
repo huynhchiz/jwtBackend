@@ -8,7 +8,10 @@ const getAllUser = async () => {
    try {
       let users = await db.User.findAll({
          attributes: ['id', 'email', 'username', 'phone', 'address'],
-         include: { model: db.Usertype, attributes: ['name', 'description'] },
+         include: [
+            { model: db.Usertype, attributes: ['id', 'name', 'description'] },
+            { model: db.Gender, attributes: ['id', 'name'] },
+         ],
       });
       if (users) {
          return {
@@ -47,7 +50,10 @@ const getUsersWithPagination = async (page, limit) => {
          offset: offset,
          limit: limit,
          attributes: ['id', 'email', 'username', 'phone', 'address'],
-         include: { model: db.Usertype, attributes: ['name', 'description'] },
+         include: [
+            { model: db.Usertype, attributes: ['id', 'name', 'description'] },
+            { model: db.Gender, attributes: ['id', 'name'] },
+         ],
       });
 
       // tổng số page để phân trang
