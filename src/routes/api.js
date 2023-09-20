@@ -2,6 +2,7 @@ import express from 'express';
 import apiController from '../controller/apiController';
 import userController from '../controller/userController';
 import usertypeController from '../controller/usertypeController';
+import genderController from '../controller/genderController';
 
 const router = express.Router();
 
@@ -18,6 +19,8 @@ const initApiRoutes = (app) => {
    router.delete('/user/delete', userController.deleteUser);
 
    router.get('/usertype/read', usertypeController.readUsertype);
+
+   router.get('/gender/read', genderController.readGender);
 
    return app.use('/api/ver1', router); // website sẽ bắt đầu bằng
 };

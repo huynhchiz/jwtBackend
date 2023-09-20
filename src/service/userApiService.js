@@ -151,6 +151,9 @@ const createNewUser = async (rawUserData) => {
          phone: rawUserData.phone,
          username: rawUserData.username,
          password: hassPass,
+         address: rawUserData.address,
+         usertypeId: rawUserData.usertypeId,
+         genderId: rawUserData.genderId,
       });
 
       return {
@@ -229,6 +232,8 @@ const updateUser = async (rawUserData) => {
             phone: rawUserData.newPhone,
             username: rawUserData.newUsername,
             address: rawUserData.newAddress,
+            usertypeId: rawUserData.newUsertypeId,
+            genderId: rawUserData.newGenderId,
          },
          {
             where: {
