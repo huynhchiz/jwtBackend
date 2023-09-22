@@ -3,14 +3,12 @@ require('dotenv').config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-const createJwt = () => {
-   let payload = { name: 'Chi', age: '18' };
+const createJwt = (payload) => {
    let secretkey = JWT_SECRET;
    let token = null;
 
    try {
       token = jwt.sign(payload, secretkey);
-      console.log(token);
    } catch (error) {
       console.log(error);
    }

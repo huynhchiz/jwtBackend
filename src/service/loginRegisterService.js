@@ -1,6 +1,12 @@
 import db from '../models/index';
 import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize'; // dùng thư viện toán tử để or condition
+require('dotenv').config();
+
+import JWTService from './JWTService';
+import JWTAction from '../middleware/JWTAction';
+
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
 const salt = bcrypt.genSaltSync(10); // bcryptjs hass sync
 
@@ -64,6 +70,7 @@ const registerUser = async (rawUserData) => {
          phone: rawUserData.phone,
          username: rawUserData.username,
          password: hassPass,
+         usertypeId: 4, //mac dinh la guess neu register
       });
 
       return {
@@ -102,12 +109,27 @@ const handleUserLogin = async (rawUserData) => {
 
          // neu password OK
          if (isCorrectPassword) {
+            // test role:
+            let usertypeWithRoles = await JWTService.getUsertypeWithRoles(user);
+            let payload = {
+               email: user.email,
+               usertypeWithRoles,
+               expiresIn: JWT_EXPIRES_IN,
+            };
+
+            let token = JWTAction.createJwt(payload);
+
             console.log('password is correct!');
             return {
                EM: 'Ok!',
                EC: '0',
-               DT: '',
+               DT: {
+                  access_token: token,
+                  usertypeWithRoles,
+               },
             };
+         } else {
+            console.log('password is incorrect!');
          }
       }
 
