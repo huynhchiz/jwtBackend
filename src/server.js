@@ -7,8 +7,17 @@ import initWebRoutes from './routes/web';
 import initApiRoutes from './routes/api';
 import configCors from './config/cors';
 
+import { createJwt, verifyToken } from '../src/middleware/JWTAction';
+
 const app = express();
 const PORT = process.env.PORT || 1997;
+
+// test create JWT
+createJwt();
+let dataDecoded = verifyToken(
+   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiQ2hpIiwiYWdlIjoiMTgiLCJpYXQiOjE2OTUzODI0NTR9.3UGshlZaDfm77pV6NMfKJhkNF_Ywf6x8mLqniqYT_Io',
+);
+console.log(dataDecoded);
 
 // config CORS
 configCors(app);
