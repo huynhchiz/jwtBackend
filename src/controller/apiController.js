@@ -1,13 +1,5 @@
 import loginRegisterService from '../service/loginRegisterService';
 
-// hàm tạo api để test get
-const testApi = (req, res) => {
-   return res.status(200).json({
-      message: 'ok',
-      data: 'hello world',
-   });
-};
-
 // register
 const handleRegister = async (req, res) => {
    try {
@@ -53,7 +45,7 @@ const handleLogin = async (req, res) => {
             httpOnly: true,
 
             // maxAge: milisecond => time exprires/max-age cookie
-            maxAge: 60 * 60 * 1000,
+            maxAge: 600000,
          },
       );
 
@@ -73,7 +65,6 @@ const handleLogin = async (req, res) => {
 };
 
 module.exports = {
-   testApi,
    handleRegister,
    handleLogin,
 };

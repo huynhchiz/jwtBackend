@@ -8,7 +8,6 @@ const getAllUsertype = async () => {
       });
 
       if (usertypes) {
-         console.log(usertypes);
          return {
             EM: 'Get usertypes success',
             EC: 0,
