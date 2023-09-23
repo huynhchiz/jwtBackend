@@ -102,7 +102,7 @@ const handleUserLogin = async (rawUserData) => {
 
       // neu co user trong db
       if (user) {
-         console.log('found user with email/phone: ', rawUserData.loginValue);
+         // console.log('found user with email/phone: ', rawUserData.loginValue);
 
          // check password
          let isCorrectPassword = checkPassword(rawUserData.password, user.password);
@@ -111,6 +111,7 @@ const handleUserLogin = async (rawUserData) => {
          if (isCorrectPassword) {
             // test role:
             let usertypeWithRoles = await JWTService.getUsertypeWithRoles(user);
+
             let payload = {
                email: user.email,
                usertypeWithRoles,

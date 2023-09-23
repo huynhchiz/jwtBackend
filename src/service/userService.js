@@ -29,24 +29,24 @@ const createNewUser = async (email, password, username) => {
 
 const getUserList = async () => {
    // chọn ra User (id, email, name) có id = 1, bao gồm cả cái Usertype (name, des) của User đó
-   let newUser = await db.User.findOne({
-      where: { id: 1 }, //điều kiện
-      attributes: ['id', 'email', 'username'], //chỉ lấy ra những columns (attributes) được chọn
-      include: { model: db.Usertype, attributes: ['name', 'description'] }, //để lấy ra data trong table mà User nó belongTo (là Usertype)
-      raw: true, // thuộc tính giúp expressjs trả về data là đúng 1 obj cần lấy
-      nest: true, //gộp những ptu giống nhau về 1 obj
-   });
+   // let newUser = await db.User.findOne({
+   //    where: { id: 1 }, //điều kiện
+   //    attributes: ['id', 'email', 'username'], //chỉ lấy ra những columns (attributes) được chọn
+   //    include: { model: db.Usertype, attributes: ['name', 'description'] }, //để lấy ra data trong table mà User nó belongTo (là Usertype)
+   //    raw: true, // thuộc tính giúp expressjs trả về data là đúng 1 obj cần lấy
+   //    nest: true, //gộp những ptu giống nhau về 1 obj
+   // });
 
    // chọn ra tất cả Role (url, des) của cái Usertype (name) có id = 1
-   let newRole = await db.Role.findAll({
-      include: { model: db.Usertype, where: { id: 1 }, attributes: ['name'] },
-      attributes: ['url', 'description'],
-      raw: true,
-      nest: true,
-   });
+   // let newRole = await db.Role.findAll({
+   //    include: { model: db.Usertype, where: { id: 1 }, attributes: ['name'] },
+   //    attributes: ['url', 'description'],
+   //    raw: true,
+   //    nest: true,
+   // });
 
-   console.log('show newUser: ', newUser);
-   console.log('show newRole: ', newRole);
+   // console.log('show newUser: ', newUser);
+   // console.log('show newRole: ', newRole);
    ///////
 
    let users = [];
