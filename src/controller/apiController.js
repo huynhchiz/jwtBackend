@@ -36,24 +36,25 @@ const handleLogin = async (req, res) => {
       let data = await loginRegisterService.handleUserLogin(req.body);
 
       // set jwt on cookie
-      res.cookie(
-         'jwt',
-         data.DT.access_token,
+      if (data && data.DT && data.DT.access_token) {
+         res.cookie(
+            'jwt',
+            data.DT.access_token,
 
-         {
-            // httpOnly: true => can only 'use' cookie from server side
-            httpOnly: true,
+            {
+               // httpOnly: true => can only 'use' cookie from server side
+               httpOnly: true,
 
-            // maxAge: milisecond => time exprires/max-age cookie
-            maxAge: 600000,
-         },
-      );
-
-      return res.status(200).json({
-         EM: data.EM,
-         EC: data.EC,
-         DT: data.DT,
-      });
+               // maxAge: milisecond => time exprires/max-age cookie
+               maxAge: 60 * 60 * 1000,
+            },
+         );
+         return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT,
+         });
+      }
    } catch (error) {
       console.log(error);
       return res.status(500).json({

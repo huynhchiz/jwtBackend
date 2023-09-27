@@ -1,5 +1,5 @@
 require('dotenv').config();
-const REACT_URL = process.env.REACT_URL || 'http://localhost:3030';
+const REACT_URL = process.env.REACT_URL || 'http://localhost:3000';
 
 const configCors = (app) => {
    // Add headers before the routes are defined

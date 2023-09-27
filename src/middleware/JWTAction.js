@@ -1,5 +1,5 @@
-import jwt from 'jsonwebtoken';
 require('dotenv').config();
+import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -29,7 +29,15 @@ const verifyToken = (token) => {
    return decoded;
 };
 
+// paths that don't need to check jwt to access
+const nonSecurePaths = ['/', '/login', '/register', '/usertype/read', '/gender/read'];
+
 const checkUserJwt = (req, res, next) => {
+   // paths non secure => next
+   if (nonSecurePaths.includes(req.path)) {
+      return next();
+   }
+
    // get jwt from cookie
    let cookies = req.cookies;
 
@@ -41,8 +49,7 @@ const checkUserJwt = (req, res, next) => {
       if (decoded) {
          // req.user được gán giá trị và các middlewares sau đó đều được sử dụng chung
          req.user = decoded;
-
-         next();
+         return next();
       } else {
          return res.status(401).json({
             EC: -1,
@@ -59,7 +66,12 @@ const checkUserJwt = (req, res, next) => {
    }
 };
 
-const checkUserPremission = (req, res, next) => {
+const checkUserPermission = (req, res, next) => {
+   // paths non secure => next
+   if (nonSecurePaths.includes(req.path)) {
+      return next();
+   }
+
    // lấy req.user từ middleware 'checkUserJwt'
    if (req.user) {
       let email = req.user.email;
@@ -73,11 +85,18 @@ const checkUserPremission = (req, res, next) => {
             DT: '',
          });
       } else {
-         let isAllowAccess = roles.some((item) => item.url === currentUrl);
-
+         // check if current url (current permission) match with 1 of user roles
+         let isAllowAccess = roles.some((role) => role.url === currentUrl);
          if (isAllowAccess) {
-            next();
+            return next();
+
+            // if doesn't match any of roles
          } else {
+            return res.status(403).json({
+               EC: -1,
+               EM: `Your don't have permission to access`,
+               DT: '',
+            });
          }
       }
    } else {
@@ -93,5 +112,5 @@ module.exports = {
    createJwt,
    verifyToken,
    checkUserJwt,
-   checkUserPremission,
+   checkUserPermission,
 };
