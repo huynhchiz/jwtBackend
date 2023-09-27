@@ -47,8 +47,10 @@ const checkUserJwt = (req, res, next) => {
       // verify token
       let decoded = verifyToken(token);
       if (decoded) {
-         // req.user được gán giá trị và các middlewares sau đó đều được sử dụng chung
+         // req.user | req.token được gán giá trị và các middlewares sau đó đều được sử dụng chung
          req.user = decoded;
+         req.token = token;
+
          return next();
       } else {
          return res.status(401).json({
@@ -68,7 +70,7 @@ const checkUserJwt = (req, res, next) => {
 
 const checkUserPermission = (req, res, next) => {
    // paths non secure => next
-   if (nonSecurePaths.includes(req.path)) {
+   if (nonSecurePaths.includes(req.path) || req.path === '/account') {
       return next();
    }
 

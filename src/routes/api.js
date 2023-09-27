@@ -15,6 +15,7 @@ const initApiRoutes = (app) => {
    router.post('/register', apiController.handleRegister);
    router.post('/login', apiController.handleLogin);
 
+   router.get('/account', userController.getUserAccount);
    // CRUD api
    router.get('/user/read', userController.readUser);
    router.post('/user/create', userController.createUser);
@@ -22,7 +23,6 @@ const initApiRoutes = (app) => {
    router.delete('/user/delete', userController.deleteUser);
 
    router.get('/usertype/read', usertypeController.readUsertype);
-
    router.get('/gender/read', genderController.readGender);
 
    return app.use('/api/ver1', router); // website sẽ bắt đầu bằng

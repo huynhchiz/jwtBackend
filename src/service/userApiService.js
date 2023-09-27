@@ -43,11 +43,11 @@ const getUsersWithPagination = async (page, limit) => {
 
       // offset là số count users 'ko được hiển thị' nằm trước usersInOnePage trong users
       // nó là thuộc tính cần để query SQL
-      let offset = (page - 1) * limit;
+      let offset = (+page - 1) * limit;
 
       // users hiển thị trong current page (type: array)
       let usersInOnePage = await db.User.findAll({
-         offset: offset,
+         offset: +offset,
          limit: limit,
          attributes: ['id', 'email', 'username', 'phone', 'address'],
          include: [

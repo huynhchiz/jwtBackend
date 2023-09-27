@@ -116,9 +116,24 @@ const deleteUser = async (req, res) => {
    }
 };
 
+// get user account
+const getUserAccount = async (req, res) => {
+   return res.status(200).json({
+      EM: 'ok',
+      EC: 0,
+      DT: {
+         access_token: req.token,
+         usertypeWithRoles: req.user.usertypeWithRoles,
+         email: req.user.email,
+         username: req.user.username,
+      },
+   });
+};
+
 module.exports = {
    readUser,
    createUser,
    updateUser,
    deleteUser,
+   getUserAccount,
 };

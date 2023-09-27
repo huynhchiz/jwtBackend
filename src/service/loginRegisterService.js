@@ -1,8 +1,8 @@
-import db from '../models/index';
+require('dotenv').config();
 import bcrypt from 'bcryptjs';
 import { Op } from 'sequelize'; // dùng thư viện toán tử để or condition
-require('dotenv').config();
 
+import db from '../models/index';
 import JWTService from './JWTService';
 import JWTAction from '../middleware/JWTAction';
 
@@ -114,6 +114,7 @@ const handleUserLogin = async (rawUserData) => {
 
             let payload = {
                email: user.email,
+               username: user.username,
                usertypeWithRoles,
                expiresIn: JWT_EXPIRES_IN,
             };

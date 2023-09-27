@@ -4,9 +4,9 @@ import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
 
 import configViewEngine from './config/viewEngine';
+import configCors from './config/cors';
 import initWebRoutes from './routes/web';
 import initApiRoutes from './routes/api';
-import configCors from './config/cors';
 
 const app = express();
 const PORT = process.env.PORT || 1997;
