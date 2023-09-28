@@ -2,13 +2,16 @@ require('dotenv').config();
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
 
 const createJwt = (payload) => {
    let secretkey = JWT_SECRET;
    let token = null;
 
    try {
-      token = jwt.sign(payload, secretkey);
+      token = jwt.sign(payload, secretkey, {
+         expiresIn: JWT_EXPIRES_IN, //set time for Jwt
+      });
    } catch (error) {
       console.log(error);
    }

@@ -6,8 +6,6 @@ import db from '../models/index';
 import JWTService from './JWTService';
 import JWTAction from '../middleware/JWTAction';
 
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
-
 const salt = bcrypt.genSaltSync(10); // bcryptjs hass sync
 
 const hashUserPassword = (userPassword) => {
@@ -116,7 +114,6 @@ const handleUserLogin = async (rawUserData) => {
                email: user.email,
                username: user.username,
                usertypeWithRoles,
-               expiresIn: JWT_EXPIRES_IN,
             };
 
             let token = JWTAction.createJwt(payload);
