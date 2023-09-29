@@ -32,6 +32,14 @@ const verifyToken = (token) => {
    return decoded;
 };
 
+const extractToken = (req) => {
+   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
+      return req.headers.authorization.split(' ')[1];
+   } else {
+      return null;
+   }
+};
+
 // paths that don't need to check jwt to access
 const nonSecurePaths = ['/', '/login', '/register', '/usertype/read', '/gender/read'];
 
@@ -43,9 +51,11 @@ const checkUserJwt = (req, res, next) => {
 
    // get jwt from cookie
    let cookies = req.cookies;
+   let tokenFromHeader = extractToken(req);
 
-   if (cookies && cookies.jwt) {
-      let token = cookies.jwt;
+   if ((cookies && cookies.jwt) || tokenFromHeader) {
+      // token từ cookies hoặc header
+      let token = cookies.jwt ? cookies.jwt : tokenFromHeader;
 
       // verify token
       let decoded = verifyToken(token);
