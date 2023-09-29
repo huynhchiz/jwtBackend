@@ -14,6 +14,7 @@ const initApiRoutes = (app) => {
    // rest api
    router.post('/register', apiController.handleRegister);
    router.post('/login', apiController.handleLogin);
+   router.post('/logout', apiController.handleLogout);
 
    router.get('/account', userController.getUserAccount);
    // CRUD api
