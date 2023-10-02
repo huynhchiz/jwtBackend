@@ -38,12 +38,14 @@ const getAllUser = async () => {
 
 const getUsersWithPagination = async (page, limit) => {
    try {
-      let users = await db.User.findAll();
+      let users = await db.User.findAll({
+         raw: true,
+      });
       let totalUser = users.length;
 
       // offset là số count users 'ko được hiển thị' nằm trước usersInOnePage trong users
       // nó là thuộc tính cần để query SQL
-      let offset = (+page - 1) * limit;
+      let offset = page > 1 ? (page - 1) * limit : 0;
 
       // users hiển thị trong current page (type: array)
       let usersInOnePage = await db.User.findAll({
@@ -54,6 +56,7 @@ const getUsersWithPagination = async (page, limit) => {
             { model: db.Usertype, attributes: ['id', 'name', 'description'] },
             { model: db.Gender, attributes: ['id', 'name'] },
          ],
+         raw: true,
       });
 
       // tổng số page để phân trang
