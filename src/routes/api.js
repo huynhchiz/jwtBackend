@@ -29,7 +29,7 @@ const initApiRoutes = (app) => {
    router.get('/usertype/read', usertypeController.readUsertype);
    router.get('/gender/read', genderController.readGender);
 
-   // CRUD roles
+   // roles
    router.get('/role/read', roleController.readRole);
    router.post('/role/create', roleController.createRole);
    router.put('/role/update', roleController.updateRole);

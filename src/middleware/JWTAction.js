@@ -42,7 +42,7 @@ const extractToken = (req) => {
 };
 
 // paths that don't need to check jwt to access
-const nonSecurePaths = ['/', '/logout', '/login', '/register', '/usertype/read', '/gender/read'];
+const nonSecurePaths = ['/', '/logout', '/login', '/register', '/usertype/read', '/gender/read', '/role/read'];
 
 const checkUserJwt = (req, res, next) => {
    // paths non secure => next

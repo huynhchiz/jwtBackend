@@ -40,6 +40,107 @@ const createNewRoles = async (newRoles) => {
    }
 };
 
+const getRoles = async (page, limit) => {
+   try {
+      let roles = await db.Role.findAll();
+
+      let totalRole = roles.length;
+      let totalPage = Math.ceil(totalRole / limit);
+      let offset = page > 1 ? (page - 1) * limit : 0;
+
+      let rolesInOnePage = await db.Role.findAll({
+         offset: +offset,
+         limit: limit,
+         attributes: ['id', 'url', 'description'],
+      });
+
+      let data = {
+         totalPage,
+         rolesInOnePage,
+      };
+
+      if (data) {
+         return {
+            EM: 'Get data success!',
+            EC: 0,
+            DT: data,
+         };
+      } else {
+         return {
+            EM: 'Get no data!',
+            EC: 0,
+            DT: [],
+         };
+      }
+   } catch (error) {
+      console.log(error);
+      return {
+         EM: 'Something wrong with service',
+         EC: -1,
+         DT: [],
+      };
+   }
+};
+
+const deleteRole = async (roleId) => {
+   try {
+      if (roleId) {
+         await db.Role.destroy({
+            where: { id: roleId },
+         });
+         return {
+            EM: 'Delete role with id = ' + roleId,
+            EC: 0,
+            DT: '',
+         };
+      } else {
+         return {
+            EM: 'No role found',
+            EC: 0,
+            DT: [],
+         };
+      }
+   } catch (error) {
+      console.log(error);
+      return {
+         EM: 'Something wrong with service',
+         EC: -1,
+         DT: [],
+      };
+   }
+};
+
+const updateRole = async (inputData) => {
+   try {
+      await db.Role.update(
+         {
+            description: inputData.description,
+         },
+         {
+            where: {
+               id: inputData.currentId,
+            },
+         },
+      );
+
+      return {
+         EM: 'Role is updated successfully',
+         EC: '0',
+         DT: '',
+      };
+   } catch (err) {
+      console.log(err);
+      return {
+         EM: 'Something wrong in service',
+         EC: '-2',
+         DT: '',
+      };
+   }
+};
+
 module.exports = {
    createNewRoles,
+   getRoles,
+   deleteRole,
+   updateRole,
 };
