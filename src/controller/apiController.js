@@ -54,6 +54,12 @@ const handleLogin = async (req, res) => {
             EC: data.EC,
             DT: data.DT,
          });
+      } else {
+         return res.status(200).json({
+            EM: data.EM,
+            EC: data.EC,
+            DT: data.DT,
+         });
       }
    } catch (error) {
       console.log(error);

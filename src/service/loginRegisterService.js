@@ -97,28 +97,17 @@ const handleUserLogin = async (rawUserData) => {
             [Op.or]: [{ email: rawUserData.loginValue }, { phone: rawUserData.loginValue }],
          },
       });
-
-      // neu co user trong db
       if (user) {
-         // console.log('found user with email/phone: ', rawUserData.loginValue);
-
-         // check password
          let isCorrectPassword = checkPassword(rawUserData.password, user.password);
-
-         // neu password OK
          if (isCorrectPassword) {
-            // test role:
+            console.log('password is correct!');
             let usertypeWithRoles = await JWTService.getUsertypeWithRoles(user);
-
             let payload = {
                email: user.email,
                username: user.username,
                usertypeWithRoles,
             };
-
             let token = JWTAction.createJwt(payload);
-
-            console.log('password is correct!');
             return {
                EM: 'Ok!',
                EC: '0',
@@ -130,15 +119,18 @@ const handleUserLogin = async (rawUserData) => {
                },
             };
          } else {
-            console.log('password is incorrect!');
+            console.log('Password is incorrect!');
+            return {
+               EM: 'email / phone number or password is incorrect!',
+               EC: '-1',
+               DT: '',
+            };
          }
       }
-
-      // neu ko co user || sai password
-      console.log('Email / phone or password is incorrect!');
+      console.log('Email / phone is incorrect!');
       return {
-         EM: 'Your email / phone number or password is incorrect!',
-         EC: '1',
+         EM: 'email / phone number or password is incorrect!',
+         EC: '-1',
          DT: '',
       };
    } catch (error) {

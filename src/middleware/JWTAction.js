@@ -100,6 +100,12 @@ const checkUserPermission = (req, res, next) => {
             EM: `Your don't have permission to access`,
             DT: '',
          });
+      }
+
+      // check url co params dong
+      let canAccess = roles.some((item) => item.url === currentUrl || currentUrl.includes(item.url));
+      if (canAccess) {
+         next();
       } else {
          // check if current url (current permission) match with 1 of user roles
          let isAllowAccess = roles.some((role) => role.url === currentUrl);

@@ -34,6 +34,8 @@ const initApiRoutes = (app) => {
    router.post('/role/create', roleController.createRole);
    router.put('/role/update', roleController.updateRole);
    router.delete('/role/delete', roleController.deleteRole);
+   router.get('/role/by-usertype/:usertypeId', roleController.getRolesByUsertype);
+   router.post('/role/assign-to-usertype', roleController.assignRolesToUsertype);
 
    return app.use('/api/ver1', router); // website sẽ bắt đầu bằng
 };

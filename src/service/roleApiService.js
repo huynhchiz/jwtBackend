@@ -42,12 +42,10 @@ const createNewRoles = async (newRoles) => {
 
 const getRoles = async (page, limit) => {
    try {
-      let roles = await db.Role.findAll();
-
-      let totalRole = roles.length;
+      let allRoles = await db.Role.findAll();
+      let totalRole = allRoles.length;
       let totalPage = Math.ceil(totalRole / limit);
       let offset = page > 1 ? (page - 1) * limit : 0;
-
       let rolesInOnePage = await db.Role.findAll({
          offset: +offset,
          limit: limit,
@@ -55,6 +53,7 @@ const getRoles = async (page, limit) => {
       });
 
       let data = {
+         allRoles,
          totalPage,
          rolesInOnePage,
       };
@@ -138,9 +137,89 @@ const updateRole = async (inputData) => {
    }
 };
 
+const getRolesByUsertype = async (id) => {
+   try {
+      if (id) {
+         let data = {};
+         let usertype = await db.Usertype.findOne({
+            where: { id: id },
+            attributes: ['id', 'name', 'description'],
+            raw: true,
+         });
+
+         let rolesByUserType = await db.Role.findAll({
+            attributes: ['id', 'url', 'description'],
+            include: {
+               model: db.Usertype,
+               where: { id: id },
+               attributes: [],
+               through: { attributes: [] },
+            },
+            throught: { attributes: [] },
+            raw: true,
+            nest: true,
+         });
+
+         // gộp lại thành 1 object 'usertypeWithRoles'
+         data = usertype && rolesByUserType ? { ...usertype, rolesByUserType } : {};
+         if (data && Object.keys(data).length !== 0) {
+            return {
+               EM: 'Get roles by usertype success!',
+               EC: 0,
+               DT: data,
+            };
+         } else {
+            return {
+               EM: 'No role found / or usertype id is incorrect',
+               EC: -1,
+               DT: '',
+            };
+         }
+      } else {
+         return {
+            EM: 'No id params',
+            EC: -1,
+            DT: '',
+         };
+      }
+   } catch (error) {
+      console.log(error);
+      return {
+         EM: 'Something wrong with service',
+         EC: -1,
+         DT: [],
+      };
+   }
+};
+
+const assignRolesToUsertype = async (data) => {
+   try {
+      await db.Role_Usertype.destroy({
+         where: { usertypeId: +data.usertypeId },
+      });
+
+      await db.Role_Usertype.bulkCreate(data.rolesUsertype);
+
+      return {
+         EM: `Assign roles for usertype id: ${data.usertypeId} success!`,
+         EC: 0,
+         DT: [],
+      };
+   } catch (error) {
+      console.log(error);
+      return {
+         EM: 'Something wrong with service',
+         EC: -1,
+         DT: [],
+      };
+   }
+};
+
 module.exports = {
    createNewRoles,
    getRoles,
    deleteRole,
    updateRole,
+   getRolesByUsertype,
+   assignRolesToUsertype,
 };
