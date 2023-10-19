@@ -107,7 +107,9 @@ const handleUserLogin = async (rawUserData) => {
                username: user.username,
                usertypeWithRoles,
             };
-            let { token, refreshToken } = JWTAction.createJwt(payload);
+            let token = JWTAction.createJwt(payload);
+            let refreshToken = JWTAction.createRefreshToken(payload);
+
             return {
                EM: 'Ok!',
                EC: '0',
@@ -144,14 +146,14 @@ const handleUserLogin = async (rawUserData) => {
    }
 };
 
-const refreshUserToken = async (userEmail, userPhone, refrToken) => {
+const refreshUserToken = async (userEmail, userPhone, refToken) => {
    try {
       let user = await db.User.findOne({
          where: userEmail ? { email: userEmail } : userPhone && { phone: userPhone },
       });
       if (user) {
          let usertypeWithRoles = await JWTService.getUsertypeWithRoles(user);
-         let { newToken, refToken } = JWTAction.refreshToken(refrToken);
+         let newToken = JWTAction.refreshToken(refToken);
 
          return {
             EM: 'refresh new token success',

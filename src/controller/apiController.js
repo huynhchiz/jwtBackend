@@ -71,36 +71,37 @@ const handleLogin = async (req, res) => {
 
 const refreshToken = async (req, res) => {
    // get refreshToken from cookie
+   let email = req.email;
+   let phone = req.phone;
    let cookies = req.cookies;
    let refreshTokenFromCookie = cookies.refreshToken;
 
    if (!refreshTokenFromCookie) {
-      return res.status(401).json({
+      return res.status(403).json({
          EM: 'No refresh token available',
          EC: '-1',
          DT: '',
       });
    }
 
-   let email = req.email;
-   let phone = req.phone;
-
    try {
       let newdata = await loginRegisterService.refreshUserToken(email, phone, refreshTokenFromCookie);
-      console.log({ newdata });
-      if (newdata) {
+      if (newdata && +newdata.EC === 0) {
          res.clearCookie('jwt');
          // set token
          res.cookie('jwt', newdata.DT.access_token, {
             httpOnly: true,
             maxAge: 60000 * 1000,
          });
-         // res.cookie('refreshToken', data.DT.refresh_token, {
-         //    httpOnly: true,
-         //    maxAge: 60000 * 1000,
-         // });
+
          return res.status(200).json({
             EM: newdata.EM,
+            EC: newdata.EC,
+            DT: newdata.DT,
+         });
+      } else {
+         return res.status(403).json({
+            EM: 'refreshToken expired!',
             EC: newdata.EC,
             DT: newdata.DT,
          });

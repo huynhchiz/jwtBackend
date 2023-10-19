@@ -4,28 +4,32 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '30s';
 const RJWT_SECRET = process.env.RJWT_SECRET;
-// const RJWT_EXPIRES_IN = process.env.RJWT_EXPIRES_IN;
+const RJWT_EXPIRES_IN = process.env.RJWT_EXPIRES_IN || '60s';
 
 const createJwt = (payload) => {
    let token = null;
-   let refreshToken = null;
 
    try {
       token = jwt.sign({ ...payload, ['iat']: Math.floor(Date.now() / 1000) }, JWT_SECRET, {
          expiresIn: JWT_EXPIRES_IN, //set time for Jwt
       });
-
-      refreshToken = jwt.sign(
-         { ...payload, ['iat']: Math.floor(Date.now() / 1000) },
-         RJWT_SECRET /*{
-         expiresIn: RJWT_EXPIRES_IN,
-      }*/,
-      );
    } catch (error) {
       console.log(error);
    }
 
-   return { token, refreshToken };
+   return token;
+};
+
+const createRefreshToken = (payload) => {
+   let refreshToken = null;
+   try {
+      refreshToken = jwt.sign({ ...payload, ['iat']: Math.floor(Date.now() / 1000) }, RJWT_SECRET, {
+         expiresIn: RJWT_EXPIRES_IN,
+      });
+   } catch (error) {
+      console.log(error);
+   }
+   return refreshToken;
 };
 
 const refreshToken = (refToken) => {
@@ -38,29 +42,21 @@ const refreshToken = (refToken) => {
       }
       if (data) {
          console.log('refreshToken data: ', data);
-         newToken = jwt.sign({ ...data, ['iat']: Math.floor(Date.now() / 1000) }, JWT_SECRET, {
-            expiresIn: JWT_EXPIRES_IN, //set time for Jwt
-         });
-
-         console.log({ newToken });
-
-         // result = {
-         //    EM: 'refresh token success!',
-         //    EC: '0',
-         //    DT: {
-         //       access_token: newToken,
-         //       refresh_token: refToken,
-         //       usertypeWithRoles: data.usertypeWithRoles,
-         //       email: data.email,
-         //       username: data.username,
-         //    },
-         // };
+         newToken = jwt.sign(
+            {
+               email: data.email,
+               username: data.username,
+               usertypeWithRoles: data.usertypeWithRoles,
+               ['iat']: Math.floor(Date.now() / 1000),
+            },
+            JWT_SECRET,
+            {
+               expiresIn: JWT_EXPIRES_IN, //set time for Jwt
+            },
+         );
       }
    });
-
-   return { newToken, refToken };
-
-   // return result;
+   return newToken;
 };
 
 const verifyToken = (token) => {
@@ -115,7 +111,7 @@ const checkUserJwt = (req, res, next) => {
    if (cookies && cookies.jwt /*|| tokenFromHeader*/) {
       // token từ cookies hoặc header
       let token = cookies.jwt; /*? cookies.jwt : tokenFromHeader*/
-      console.log({ token });
+      // console.log({ token });
 
       // verify token
       let resultVerify = verifyToken(token);
@@ -210,5 +206,6 @@ module.exports = {
    verifyToken,
    checkUserJwt,
    checkUserPermission,
+   createRefreshToken,
    refreshToken,
 };
