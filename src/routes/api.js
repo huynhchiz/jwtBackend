@@ -20,6 +20,9 @@ const initApiRoutes = (app) => {
    // get logging in current account
    router.get('/account', userController.getUserAccount);
 
+   // refresh token
+   router.post('/refresh-token', apiController.refreshToken);
+
    // CRUD users
    router.get('/user/read', userController.readUser);
    router.post('/user/create', userController.createUser);

@@ -2,31 +2,80 @@ require('dotenv').config();
 import jwt from 'jsonwebtoken';
 
 const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '30s';
+const RJWT_SECRET = process.env.RJWT_SECRET;
+// const RJWT_EXPIRES_IN = process.env.RJWT_EXPIRES_IN;
 
 const createJwt = (payload) => {
-   let secretkey = JWT_SECRET;
    let token = null;
+   let refreshToken = null;
 
    try {
-      token = jwt.sign(payload, secretkey, {
+      token = jwt.sign({ ...payload, ['iat']: Math.floor(Date.now() / 1000) }, JWT_SECRET, {
          expiresIn: JWT_EXPIRES_IN, //set time for Jwt
       });
+
+      refreshToken = jwt.sign(
+         { ...payload, ['iat']: Math.floor(Date.now() / 1000) },
+         RJWT_SECRET /*{
+         expiresIn: RJWT_EXPIRES_IN,
+      }*/,
+      );
    } catch (error) {
       console.log(error);
    }
 
-   return token;
+   return { token, refreshToken };
+};
+
+const refreshToken = (refToken) => {
+   // let result = {};
+   let newToken = null;
+   jwt.verify(refToken, RJWT_SECRET, (err, data) => {
+      if (err) {
+         console.log('refreshToken err: ', err);
+         res.sendStatus(403);
+      }
+      if (data) {
+         console.log('refreshToken data: ', data);
+         newToken = jwt.sign({ ...data, ['iat']: Math.floor(Date.now() / 1000) }, JWT_SECRET, {
+            expiresIn: JWT_EXPIRES_IN, //set time for Jwt
+         });
+
+         console.log({ newToken });
+
+         // result = {
+         //    EM: 'refresh token success!',
+         //    EC: '0',
+         //    DT: {
+         //       access_token: newToken,
+         //       refresh_token: refToken,
+         //       usertypeWithRoles: data.usertypeWithRoles,
+         //       email: data.email,
+         //       username: data.username,
+         //    },
+         // };
+      }
+   });
+
+   return { newToken, refToken };
+
+   // return result;
 };
 
 const verifyToken = (token) => {
-   let secretkey = JWT_SECRET;
    let decoded = null;
+   let EM = '';
 
    try {
-      decoded = jwt.verify(token, secretkey);
+      decoded = jwt.verify(token, JWT_SECRET);
    } catch (error) {
-      console.log(error);
+      console.log('verifyToken error:', error);
+      if (error.toString().includes('expired')) {
+         console.log('expired token hihi');
+         EM = 'expired token';
+         return EM;
+      }
    }
 
    return decoded;
@@ -42,7 +91,16 @@ const extractToken = (req) => {
 };
 
 // paths that don't need to check jwt to access
-const nonSecurePaths = ['/', '/logout', '/login', '/register', '/usertype/read', '/gender/read', '/role/read'];
+const nonSecurePaths = [
+   '/',
+   '/logout',
+   '/login',
+   '/register',
+   '/usertype/read',
+   '/gender/read',
+   '/role/read',
+   '/refresh-token',
+];
 
 const checkUserJwt = (req, res, next) => {
    // paths non secure => next
@@ -52,27 +110,36 @@ const checkUserJwt = (req, res, next) => {
 
    // get jwt from cookie
    let cookies = req.cookies;
-   let tokenFromHeader = extractToken(req);
+   // let tokenFromHeader = extractToken(req);
 
-   if ((cookies && cookies.jwt) || tokenFromHeader) {
+   if (cookies && cookies.jwt /*|| tokenFromHeader*/) {
       // token từ cookies hoặc header
-      let token = cookies.jwt ? cookies.jwt : tokenFromHeader;
+      let token = cookies.jwt; /*? cookies.jwt : tokenFromHeader*/
+      console.log({ token });
 
       // verify token
-      let decoded = verifyToken(token);
-      if (decoded) {
+      let resultVerify = verifyToken(token);
+      if (resultVerify && resultVerify !== 'expired token') {
          // req.user | req.token được gán giá trị và các middlewares sau đó đều được sử dụng chung
-         req.user = decoded;
+         req.user = resultVerify;
          req.token = token;
 
          return next();
-      } else {
-         return res.status(401).json({
-            EC: -1,
-            EM: 'Not authenticated user',
+      }
+
+      if (resultVerify && resultVerify === 'expired token') {
+         req.user = resultVerify;
+         return res.status(403).json({
+            EC: -3,
+            EM: 'expired token',
             DT: '',
          });
       }
+      return res.status(401).json({
+         EC: -1,
+         EM: 'Not authenticated user',
+         DT: '',
+      });
    } else {
       return res.status(401).json({
          EC: -1,
@@ -88,8 +155,16 @@ const checkUserPermission = (req, res, next) => {
       return next();
    }
 
+   if (req.user && req.user === 'expired token') {
+      return res.status(403).json({
+         EC: -3,
+         EM: 'expired token',
+         DT: '',
+      });
+   }
+
    // lấy req.user từ middleware 'checkUserJwt'
-   if (req.user) {
+   if (req.user && req.user !== 'expired token') {
       let email = req.user.email;
       let roles = req.user.usertypeWithRoles.roles;
       let currentUrl = req.path;
@@ -135,4 +210,5 @@ module.exports = {
    verifyToken,
    checkUserJwt,
    checkUserPermission,
+   refreshToken,
 };

@@ -107,12 +107,13 @@ const handleUserLogin = async (rawUserData) => {
                username: user.username,
                usertypeWithRoles,
             };
-            let token = JWTAction.createJwt(payload);
+            let { token, refreshToken } = JWTAction.createJwt(payload);
             return {
                EM: 'Ok!',
                EC: '0',
                DT: {
                   access_token: token,
+                  refresh_token: refreshToken,
                   usertypeWithRoles,
                   email: user.email,
                   username: user.username,
@@ -143,7 +144,39 @@ const handleUserLogin = async (rawUserData) => {
    }
 };
 
+const refreshUserToken = async (userEmail, userPhone, refrToken) => {
+   try {
+      let user = await db.User.findOne({
+         where: userEmail ? { email: userEmail } : userPhone && { phone: userPhone },
+      });
+      if (user) {
+         let usertypeWithRoles = await JWTService.getUsertypeWithRoles(user);
+         let { newToken, refToken } = JWTAction.refreshToken(refrToken);
+
+         return {
+            EM: 'refresh new token success',
+            EC: '0',
+            DT: {
+               access_token: newToken,
+               refresh_token: refToken,
+               usertypeWithRoles,
+               email: user.email,
+               username: user.username,
+            },
+         };
+      }
+   } catch (error) {
+      console.log(error);
+      return {
+         EM: 'Something wrong in service',
+         EC: '-2',
+         DT: '',
+      };
+   }
+};
+
 module.exports = {
    registerUser,
    handleUserLogin,
+   refreshUserToken,
 };
