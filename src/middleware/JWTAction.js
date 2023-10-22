@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '30s';
 const RJWT_SECRET = process.env.RJWT_SECRET;
-const RJWT_EXPIRES_IN = process.env.RJWT_EXPIRES_IN || '60s';
+const RJWT_EXPIRES_IN = process.env.RJWT_EXPIRES_IN || '1d';
 
 const createJwt = (payload) => {
    let token = null;
@@ -33,8 +33,8 @@ const createRefreshToken = (payload) => {
 };
 
 const refreshToken = (refToken) => {
-   // let result = {};
    let newToken = null;
+   let newTokenData = {};
    jwt.verify(refToken, RJWT_SECRET, (err, data) => {
       if (err) {
          console.log('refreshToken err: ', err);
@@ -54,9 +54,17 @@ const refreshToken = (refToken) => {
                expiresIn: JWT_EXPIRES_IN, //set time for Jwt
             },
          );
+
+         newTokenData = {
+            newToken,
+            email: data.email,
+            username: data.username,
+            usertypeWithRoles: data.usertypeWithRoles,
+         };
       }
    });
-   return newToken;
+
+   return newTokenData;
 };
 
 const verifyToken = (token) => {
@@ -87,20 +95,11 @@ const extractToken = (req) => {
 };
 
 // paths that don't need to check jwt to access
-const nonSecurePaths = [
-   '/',
-   '/logout',
-   '/login',
-   '/register',
-   '/usertype/read',
-   '/gender/read',
-   '/role/read',
-   '/refresh-token',
-];
+const nonSecurePathsJwt = ['/', '/logout', '/login', '/register', '/refresh-token'];
 
 const checkUserJwt = (req, res, next) => {
    // paths non secure => next
-   if (nonSecurePaths.includes(req.path)) {
+   if (nonSecurePathsJwt.includes(req.path)) {
       return next();
    }
 
@@ -145,9 +144,22 @@ const checkUserJwt = (req, res, next) => {
    }
 };
 
+// paths that don't need to check jwt permission to access
+const nonSecurePathsPermission = [
+   '/',
+   '/logout',
+   '/login',
+   '/register',
+   '/usertype/read',
+   '/gender/read',
+   '/role/read',
+   '/account',
+   '/refresh-token',
+];
+
 const checkUserPermission = (req, res, next) => {
    // paths non secure => next
-   if (nonSecurePaths.includes(req.path) || req.path === '/account') {
+   if (nonSecurePathsPermission.includes(req.path)) {
       return next();
    }
 

@@ -146,27 +146,21 @@ const handleUserLogin = async (rawUserData) => {
    }
 };
 
-const refreshUserToken = async (userEmail, userPhone, refToken) => {
+const refreshUserToken = async (refToken) => {
    try {
-      let user = await db.User.findOne({
-         where: userEmail ? { email: userEmail } : userPhone && { phone: userPhone },
-      });
-      if (user) {
-         let usertypeWithRoles = await JWTService.getUsertypeWithRoles(user);
-         let newToken = JWTAction.refreshToken(refToken);
+      let { newToken, email, username, usertypeWithRoles } = JWTAction.refreshToken(refToken);
 
-         return {
-            EM: 'refresh new token success',
-            EC: '0',
-            DT: {
-               access_token: newToken,
-               refresh_token: refToken,
-               usertypeWithRoles,
-               email: user.email,
-               username: user.username,
-            },
-         };
-      }
+      return {
+         EM: 'refresh new token success',
+         EC: '0',
+         DT: {
+            access_token: newToken,
+            refresh_token: refToken,
+            usertypeWithRoles,
+            email,
+            username,
+         },
+      };
    } catch (error) {
       console.log(error);
       return {

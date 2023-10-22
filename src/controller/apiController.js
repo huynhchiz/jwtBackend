@@ -71,8 +71,6 @@ const handleLogin = async (req, res) => {
 
 const refreshToken = async (req, res) => {
    // get refreshToken from cookie
-   let email = req.email;
-   let phone = req.phone;
    let cookies = req.cookies;
    let refreshTokenFromCookie = cookies.refreshToken;
 
@@ -85,7 +83,7 @@ const refreshToken = async (req, res) => {
    }
 
    try {
-      let newdata = await loginRegisterService.refreshUserToken(email, phone, refreshTokenFromCookie);
+      let newdata = await loginRegisterService.refreshUserToken(refreshTokenFromCookie);
       if (newdata && +newdata.EC === 0) {
          res.clearCookie('jwt');
          // set token
